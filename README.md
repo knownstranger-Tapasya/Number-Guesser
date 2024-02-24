@@ -24,7 +24,7 @@ To play the game, open the `index.html` file in your web browser. You can also h
 
 ## Author
 
-[Tapasya-](https://github.com/knownstranger-Tapasya/)
+[Tapasya](https://github.com/knownstranger-Tapasya/)
 
 ## License
 
