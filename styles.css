@@ -73,6 +73,10 @@ button:hover,
     background: linear-gradient(45deg, #2980b9, #3498db);
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: ;
+    -moz-border-radius: ;
+    -ms-border-radius: ;
+    -o-border-radius: ;
 }
 
 h1 {
@@ -84,6 +88,10 @@ h1 {
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
     margin-top: 0;
     text-align: center;
+    -webkit-border-radius: ;
+    -moz-border-radius: ;
+    -ms-border-radius: ;
+    -o-border-radius: ;
 }
 
 p {
@@ -91,4 +99,30 @@ p {
     text-align: center;
     margin-top: 20px;
     color: #fff;
+}
+
+/* Add these styles for blinking effect */
+
+@keyframes blink-red {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.lowOrHi.too-low {
+    color: red;
+    animation: blink-red 2s infinite;
+    -webkit-animation: blink-red 2s infinite;
+}
+
+.lowOrHi.too-high {
+    color: red;
+    animation: blink-red 2s infinite;
+    -webkit-animation: blink-red 2s infinite;
 }
