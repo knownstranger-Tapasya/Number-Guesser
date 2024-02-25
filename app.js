@@ -1,130 +1,113 @@
-//Generate a random number between 1 and 500
-let randomNumber = parseInt((Math.random() * 100) + 1);
+// Generate a random number between 1 and 100
+let randomNumber = Math.floor(Math.random() * 100) + 1;
+
+// Selecting DOM elements
 const submit = document.querySelector('#subt');
 const userInput = document.querySelector('#guessField');
 const guessSlot = document.querySelector('.guesses');
 const remaining = document.querySelector('.lastResult');
 const startOver = document.querySelector('.resultParas');
 const lowOrHi = document.querySelector('.lowOrHi');
-const p = document.createElement('p');
+const newGameButton = document.querySelector('#newGame');
+const timerDisplay = document.getElementById('timer');
+
+// Variables to track game state
 let previousGuesses = [];
-let numGuesses = 1;
-let playGame = true;
+let numGuesses = 0;
+let timeRemaining = 60; // Set initial time to 60 seconds
+let timerInterval;
 
-if (playGame) {
-    subt.addEventListener('click', function(e) {
-        e.preventDefault();
-        //Grab guess from user
-        const guess = parseInt(userInput.value);
-        validateGuess(guess);
-    });
-}
-
-
-function checkGuess(guess) {
-    //Display clue if guess is too high or too low
-    if (guess === randomNumber) {
-        displayMessage(`You guessed correctly!`);
-        endGame();
-    } else if (guess < randomNumber) {
-        displayMessage(`Too low! Try again!`);
-    } else if (guess > randomNumber) {
-        displayMessage(`Too High! Try again!`);
-    }
-}
-
-function displayGuesses(guess) {
-    userInput.value = '';
-    guessSlot.innerHTML += `${guess}  `;
-    numGuesses++
-    remaining.innerHTML = `${11 - numGuesses}  `;
-}
-
+// Function to display messages
 function displayMessage(message) {
-    lowOrHi.innerHTML = `<h1>${message}</h1>`
+    lowOrHi.textContent = message;
 }
 
-function endGame() {
-    //Clear user input
-    userInput.value = '';
-    //Disable user input button
-    userInput.setAttribute('disabled', '');
-    //Display Start new Game Button
-    p.classList.add('button');
-    p.innerHTML = `<h1 id="newGame">Start New Game</h1>`
-    startOver.appendChild(p);
-    playGame = false;
-    newGame();
-}
-
-function newGame() {
-    const newGameButton = document.querySelector('#newGame');
-    newGameButton.addEventListener('click', function() {
-        //Pick a new random number
-        randomNumber = parseInt((Math.random() * 100) + 1);
-        previousGuesses = [];
-        numGuesses = 1;
-        guessSlot.innerHTML = '';
-        lowOrHi.innerHTML = '';
-        remaining.innerHTML = `${11 - numGuesses}  `;
-        userInput.removeAttribute('disabled');
-        startOver.removeChild(p);
-        playGame = true;
-    })
-}
-
-// Add a variable to store the remaining time and set it to 60 seconds
-let timeRemaining = 60;
-
-// Update the timer function to decrement the time
+// Function to update the timer
 function updateTimer() {
     timeRemaining--;
-    document.getElementById('timer').innerText = timeRemaining + ' seconds remaining';
+    timerDisplay.textContent = `${timeRemaining} seconds remaining`;
 
     if (timeRemaining === 0) {
         endGame();
+        displayMessage(`Time's up! Number was ${randomNumber}`);
     }
 }
 
-// Start the timer when the game starts
-const timerInterval = setInterval(updateTimer, 1000);
-
-// Function to update the number of attempts remaining
-function updateAttemptsRemaining() {
-    document.getElementById('guessesRemaining').innerText = 10 - numGuesses + ' attempts remaining';
-}
-
-// Add this line within the displayGuesses function to update attempts remaining
-updateAttemptsRemaining();
-
-// Add this line within the checkGuess function after incrementing numGuesses to update attempts remaining
-updateAttemptsRemaining();
-
-// Add this line within the endGame function to stop the timer when the game ends
-clearInterval(timerInterval);
-
+// Function to handle the game logic
 function validateGuess(guess) {
-    if (isNaN(guess)) {
-        alert('Please enter a valid number');
-    } else if (guess < 1) {
-        alert('Please enter a number greater than 1!');
-    } else if (guess > 100) {
-        alert('Please enter a number less than 100!')
+    if (isNaN(guess) || guess < 1 || guess > 100) {
+        displayMessage('Please enter a valid number between 1 and 100.');
+        return;
+    }
+
+    numGuesses++;
+    previousGuesses.push(guess);
+    displayGuesses(guess);
+
+    if (guess === randomNumber) {
+        displayMessage('Congratulations! You guessed the correct number!');
+        endGame();
+    } else if (numGuesses === 10) {
+        displayMessage(`Game over! The number was ${randomNumber}.`);
+        endGame();
     } else {
-        previousGuesses.push(guess);
-        if (numGuesses === 11) {
-            displayGuesses(guess);
-            displayMessage(`Game Over! Number was ${randomNumber}`);
-            endGame();
+        const message = guess < randomNumber ? 'Too low! Try again!' : 'Too high! Try again!';
+        displayMessage(message);
+        if (guess < randomNumber) {
+            lowOrHi.classList.remove('too-high');
+            lowOrHi.classList.add('too-low');
         } else {
-            displayGuesses(guess);
-            if (guess === randomNumber) {
-                displayMessage(`You guessed correctly!`);
-                endGame();
-                clearInterval(timerInterval); // Stop the timer
-            } else {
-                checkGuess(guess);
-            }
+            lowOrHi.classList.remove('too-low');
+            lowOrHi.classList.add('too-high');
         }
     }
 }
+
+
+// Function to display guesses and remaining attempts
+function displayGuesses(guess) {
+    guessSlot.textContent += `${guess} `;
+    remaining.textContent = `${10 - numGuesses} attempts remaining`;
+}
+
+// Function to start a new game
+function startNewGame() {
+    // Reset variables and UI
+    randomNumber = Math.floor(Math.random() * 100) + 1;
+    previousGuesses = [];
+    numGuesses = 0;
+    timeRemaining = 60;
+    guessSlot.textContent = '';
+    remaining.textContent = '10 attempts remaining';
+    lowOrHi.textContent = '';
+    timerDisplay.textContent = '60 seconds remaining';
+
+    // Enable input and start timer
+    userInput.removeAttribute('disabled');
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+// Function to end the game
+function endGame() {
+    // Disable input and stop timer
+    userInput.setAttribute('disabled', '');
+    clearInterval(timerInterval);
+
+    // Show "Start New Game" button
+    const button = document.createElement('button');
+    button.textContent = 'Start New Game';
+    button.addEventListener('click', startNewGame);
+    startOver.appendChild(button);
+}
+
+// Event listener for the submit button
+submit.addEventListener('click', function(e) {
+    e.preventDefault();
+    const guess = parseInt(userInput.value);
+    validateGuess(guess);
+    userInput.value = ''; // Clear input field after submission
+});
+
+// Start new game when the page loads
+startNewGame();
