@@ -117,12 +117,14 @@ p {
 
 .lowOrHi.too-low {
     color: red;
+    font-weight: bold;
     animation: blink-red 2s infinite;
     -webkit-animation: blink-red 2s infinite;
 }
 
 .lowOrHi.too-high {
     color: red;
+    font-weight: bold;
     animation: blink-red 2s infinite;
     -webkit-animation: blink-red 2s infinite;
 }
